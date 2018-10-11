@@ -1,5 +1,6 @@
 import React from 'react'; 
 import Aux from '../../hoc/Aux'; 
+import classes from './Layout.css'; 
 
 const layout = (props) => (
 
@@ -7,8 +8,8 @@ const layout = (props) => (
         <div>
             Toolbar, SideDrawer, Backdrop
         </div>
-        <main>
-            {props.children}
+        <main className={classes.Content}>
+            {props.children} {/** getting this from the parent component */}
         </main>
     </Aux>
 ); 
