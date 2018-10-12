@@ -1,7 +1,9 @@
 import React, { Component } from 'react'; 
 import Aux from '../../hoc/Aux'; 
 import Burger from '../../components/Burger/Burger'; 
-import BuildControls from '../../components/Burger/BuildControls/BuildControls'; 
+import BuildControls from '../../components/Burger/BuildControls/BuildControls';
+import  Modal from '../../components/UI/Modal/Modal'; 
+import OrderSummary from '../../components/Burger/OderSummary/OrderSummary'; 
 
 /** Seetting prices for each ingridient */
 const INGRIDIENT_PRICES = {
@@ -16,13 +18,25 @@ class BurgerBuilder extends Component {
 
     /** Buger state of ingridients */
     state = {
-        ingridient: {
+        ingridient: { 
             salad:  0, 
             bacon: 0,
             cheese: 0,
             meat: 0,
         },
-        totalPrice: 4 
+        totalPrice: 4,
+        purchasable: false
+    }
+
+    updatePurchaseState(ingridients) {
+        const sum = Object.keys(ingridients) // create array of our ingridients object
+            .map(igKey => { // map it 
+                return ingridients[igKey] // return the value for each key 
+            })
+            .reduce((sum, el) => {
+                return sum + el; 
+            }, 0); 
+        this.setState({purchasable: sum > 0}) // purchase is true if the total sum is > 0   
     }
 
     /* add ingridients */
@@ -40,18 +54,56 @@ class BurgerBuilder extends Component {
         const oldPrice = this.state.totalPrice; 
         const newPrice = oldPrice + priceAddition; 
         this.setState({totalPrice: newPrice, ingridient: updatedIngridients}); 
+        this.updatePurchaseState(updatedIngridients); 
     }
 
     /** remove ingridients */
     removeIngridientHandler = (type) => {
-
+         /** get old ingridient count*/
+         const oldCount = this.state.ingridient[type];
+         // make sure we return 0 when there are no ingridients 
+         if (oldCount <= 0) {
+            return 0; 
+         }
+         const updatedCounted = oldCount - 1;
+         // create a new array of our old orray 
+         const updatedIngridients = {
+             ...this.state.ingridient
+         }; 
+         updatedIngridients[type] = updatedCounted;
+         // fetch the price 
+         const priceDeduction = INGRIDIENT_PRICES[type];
+         const oldPrice = this.state.totalPrice;
+         const newPrice = oldPrice - priceDeduction;
+         this.setState({
+             totalPrice: newPrice,
+             ingridient: updatedIngridients
+         });
+         this.updatePurchaseState(updatedIngridients);
     }
 
     render() {
+        // copy our ingrideints on an inmutible way 
+        const disabledInfo = {
+            ...this.state.ingridient // {salad: true, meat: flase ....}
+        }; 
+
+        for (let key in disabledInfo) {
+            disabledInfo[key] = disabledInfo[key] <= 0; 
+        }
+
         return (
             <Aux>
+                <Modal>
+                    <OrderSummary ingridient={this.state.ingridient}/>
+                </Modal>
                 <Burger ingridients={this.state.ingridient}/>
-                <BuildControls ingridientAdded={this.addIngridientHandler} />
+                <BuildControls 
+                    purchasable={this.state.purchasable}
+                    price={this.state.totalPrice}
+                    disabled={disabledInfo}
+                    ingridientRemoved={this.removeIngridientHandler}
+                    ingridientAdded={this.addIngridientHandler} />
             </Aux>
         ); 
     }

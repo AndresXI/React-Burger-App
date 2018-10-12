@@ -21,7 +21,7 @@ const burger = (props) => {
         if (transformedIngridients.length === 0) {
             transformedIngridients = <p>Please Add Ingridients!</p>
         }
-
+        
     console.log(transformedIngridients); 
 
     return (
