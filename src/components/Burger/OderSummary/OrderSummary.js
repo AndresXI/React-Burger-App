@@ -1,28 +1,42 @@
-import React from 'react'; 
-import Aux from '../../../hoc/Aux'; 
+import React, { Component } from 'react'; 
+import Aux from '../../../hoc/Aux/Aux'; 
 import Button from '../../UI/Button/Button'; 
 
-const orderSummary = (props) => {
-    const ingridientSummary = Object.keys(props.ingridient)
+class OrderSummary extends Component {
+    // This could be a functional component does'nt have to be a class
+
+    componentWillUpdate() {
+        console.log('[OrderSummay willUPdsate]'); 
+    }
+
+
+
+    render() {
+
+        const ingridientSummary = Object.keys(this.props.ingridient)
         .map(igKey => {
             return <li key={igKey}>
-                    <span syle={{textTransform: 'capitalize'}}>{igKey}</span>: {props.ingridient[igKey]} 
+                    <span 
+                    style={{textTransform: 'capitalize'}}>{igKey}</span>: 
+                    {this.props.ingridient[igKey]} 
                    </li>
         }); 
 
-    return (
-        <Aux>
-            <h3>Your Order</h3>
-            <p>A delicious burger with the following ingredients:</p>
-            <ul>
-                {ingridientSummary}
-            </ul>
-            <p>Continue to Ckeckout?</p>
-            <p><strong>Your total: ${props.price.toFixed(2)}</strong></p>
-            <Button btnType="Danger" clicked={props.purchaseCancelled}>CANCEL</Button>
-            <Button btnType="Success" clicked={props.purchaseContinued}>CONTINUE</Button>
-        </Aux>
-    )
-}
 
-export default orderSummary; 
+        return (
+            <Aux>
+                <h3>Your Order</h3>
+                <p>A delicious burger with the following ingredients:</p>
+                <ul>
+                    {ingridientSummary}
+                </ul>
+                <p>Continue to Ckeckout?</p>
+                <p><strong>Your total: ${this.props.price.toFixed(2)}</strong></p>
+                <Button btnType="Danger" clicked={this.props.purchaseCancelled}>CANCEL</Button>
+                <Button btnType="Success" clicked={this.props.purchaseContinued}>CONTINUE</Button>
+            </Aux>
+        ); 
+    }
+} 
+
+export default OrderSummary; 
