@@ -6,7 +6,7 @@ const orderSummary = (props) => {
     const ingridientSummary = Object.keys(props.ingridient)
         .map(igKey => {
             return <li key={igKey}>
-                    <span syle={{textTransform: 'capitalize'}}>{igKey}</span>:{props.ingridient[igKey]} 
+                    <span syle={{textTransform: 'capitalize'}}>{igKey}</span>: {props.ingridient[igKey]} 
                    </li>
         }); 
 
@@ -18,6 +18,7 @@ const orderSummary = (props) => {
                 {ingridientSummary}
             </ul>
             <p>Continue to Ckeckout?</p>
+            <p><strong>Your total: ${props.price.toFixed(2)}</strong></p>
             <Button btnType="Danger" clicked={props.purchaseCancelled}>CANCEL</Button>
             <Button btnType="Success" clicked={props.purchaseContinued}>CONTINUE</Button>
         </Aux>
