@@ -10,7 +10,6 @@ class OrderSummary extends Component {
     }
 
 
-
     render() {
 
         const ingridientSummary = Object.keys(this.props.ingridient)

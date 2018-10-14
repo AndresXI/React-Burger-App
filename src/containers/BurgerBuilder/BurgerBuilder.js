@@ -4,6 +4,7 @@ import Burger from '../../components/Burger/Burger';
 import BuildControls from '../../components/Burger/BuildControls/BuildControls';
 import  Modal from '../../components/UI/Modal/Modal'; 
 import OrderSummary from '../../components/Burger/OderSummary/OrderSummary'; 
+import axios from '../../axios-orders'; 
 
 /** Seetting prices for each ingridient */
 const INGRIDIENT_PRICES = {
@@ -49,7 +50,29 @@ class BurgerBuilder extends Component {
     }
 
     purchaseContinueHandler = () => {
-        alert("You continue!"); 
+        const order = {
+            ingrideints: this.state.ingridient,
+            price: this.state.price, 
+            customer: { // order we want to store on the backend 
+                name: 'andres', 
+                address: {
+                    street: 'my street adress', 
+                    zipCode: '4353',
+                    country: 'Germany'
+                },
+                email: 'test@yahoo.com'
+            }, 
+            deliveryMethod: 'fastest'
+        }
+       // send data to backend with axios
+       axios.post('/orders.json', order)
+            .then(response => {
+                console.log(response); 
+            })
+            .catch(error => {
+                console.log(error); 
+            }); // endpoint
+
     }
 
     /* add ingridients */
