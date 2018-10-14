@@ -5,6 +5,7 @@ import BuildControls from '../../components/Burger/BuildControls/BuildControls';
 import  Modal from '../../components/UI/Modal/Modal'; 
 import OrderSummary from '../../components/Burger/OderSummary/OrderSummary'; 
 import axios from '../../axios-orders'; 
+import Spinner from '../../components/UI/Spinner/Spinner'; 
 
 /** Seetting prices for each ingridient */
 const INGRIDIENT_PRICES = {
@@ -27,7 +28,8 @@ class BurgerBuilder extends Component {
         },
         totalPrice: 0,
         purchasable: false,
-        purchasing: false
+        purchasing: false,
+        loading: false
     }
 
     updatePurchaseState(ingridients) {
@@ -45,15 +47,16 @@ class BurgerBuilder extends Component {
         this.setState({purchasing: true}); 
     }
 
-    purcaseCancelHandler = () => {
+    purchaseCancelHandler = () => {
         this.setState({purchasing: false}); 
     }
 
     purchaseContinueHandler = () => {
-        const order = {
+        this.setState({ loading: true }); 
+        const order = { // order we want to store on the backend
             ingrideints: this.state.ingridient,
             price: this.state.price, 
-            customer: { // order we want to store on the backend 
+            customer: { 
                 name: 'andres', 
                 address: {
                     street: 'my street adress', 
@@ -67,10 +70,10 @@ class BurgerBuilder extends Component {
        // send data to backend with axios
        axios.post('/orders.json', order)
             .then(response => {
-                console.log(response); 
+                this.setState({loading: false, purchasing: false}); 
             })
             .catch(error => {
-                console.log(error); 
+                this.setState({ loading: false, purchasing: false }); 
             }); // endpoint
 
     }
@@ -80,7 +83,7 @@ class BurgerBuilder extends Component {
         /** get old ingridient count*/
         const oldCount = this.state.ingridient[type]; 
         const updatedCounted = oldCount + 1; 
-        // create a new array of our old orray 
+        // create a new array of our old array 
         const updatedIngridients = {
             ...this.state.ingridient
         }
@@ -119,25 +122,31 @@ class BurgerBuilder extends Component {
     }
 
     render() {
-        // copy our ingrideints on an inmutible way 
+        // copy our ingredients on an immutable way 
         const disabledInfo = {
-            ...this.state.ingridient // {salad: true, meat: flase ....}
+            ...this.state.ingridient // {salad: true, meat: false ....}
         }; 
 
         for (let key in disabledInfo) {
             disabledInfo[key] = disabledInfo[key] <= 0; 
         }
 
+        let orderSummary = <OrderSummary
+            price={this.state.totalPrice}
+            purchaseContinued={this.purchaseContinueHandler}
+            purchaseCancelled={this.purchaseCancelHandler}
+            ingridient={this.state.ingridient} />; 
+        // showing the loader spinner 
+        if (this.state.loading) {
+            orderSummary = <Spinner />; 
+        }
+
         return (
             <Aux>
                 <Modal 
-                    modalClosed={this.purcaseCancelHandler}
+                    modalClosed={this.purchaseCancelHandler}
                     show={this.state.purchasing}>
-                    <OrderSummary 
-                        price={this.state.totalPrice}
-                        purchaseContinued={this.purchaseContinueHandler}
-                        purchaseCancelled={this.purcaseCancelHandler}
-                        ingridient={this.state.ingridient}/>
+                    {orderSummary}
                 </Modal>
                 <Burger ingridients={this.state.ingridient}/>
                 <BuildControls 
