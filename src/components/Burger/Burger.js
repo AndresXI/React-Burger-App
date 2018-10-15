@@ -6,6 +6,7 @@ const burger = (props) => {
 
     /** returns an array of the objects property */
     // [meat, bacon, salad...] 
+    console.log(props);
     let transformedIngridients = Object.keys(props.ingridients)
         .map(igKey => {
             // create a new array with all of the values for each ingridient 
