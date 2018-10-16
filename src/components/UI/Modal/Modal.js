@@ -20,12 +20,12 @@ class Modal extends Component {
                 <Backdrop 
                     clicked={this.props.modalClosed}
                     show={this.props.show} />
-                <div 
+                <div
+                    className={classes.Modal}
                     style={{
                         transform: this.props.show ? 'translateY(0)' : 'translateY(-100vh)',
                         opacity: this.props.show ? '1' : '0'
-                    }}
-                    className={classes.Modal}>
+                    }}>
                     {this.props.children} 
                 </div>
             </Aux>  
