@@ -32,6 +32,7 @@ class BurgerBuilder extends Component {
 
     // fetching data from the backend 
     componentDidMount() {
+        console.log(this.props); 
         // getting our ingridents 
         axios.get('https://react-burger-app-d3a03.firebaseio.com/ingridients.json')
             .then(response => {
@@ -63,30 +64,31 @@ class BurgerBuilder extends Component {
     }
 
     purchaseContinueHandler = () => {
-        this.setState({ loading: true }); 
-        const order = { // order we want to store on the backend
-            ingrideints: this.state.ingridient,
-            price: this.state.price, 
-            customer: { 
-                name: 'andres', 
-                address: {
-                    street: 'my street adress', 
-                    zipCode: '4353',
-                    country: 'Germany'
-                },
-                email: 'test@yahoo.com'
-            }, 
-            deliveryMethod: 'fastest'
-        }
-       // send data to backend with axios
-       axios.post('/orders.json', order)
-            .then(response => {
-                this.setState({loading: false, purchasing: false}); 
-            })
-            .catch(error => {
-                this.setState({ loading: false, purchasing: false }); 
-            }); // endpoint
+    //     this.setState({ loading: true }); 
+    //     const order = { // order we want to store on the backend
+    //         ingrideints: this.state.ingridient,
+    //         price: this.state.price, 
+    //         customer: { 
+    //             name: 'andres', 
+    //             address: {
+    //                 street: 'my street adress', 
+    //                 zipCode: '4353',
+    //                 country: 'Germany'
+    //             },
+    //             email: 'test@yahoo.com'
+    //         }, 
+    //         deliveryMethod: 'fastest'
+    //     }
+    //    // send data to backend with axios
+    //    axios.post('/orders.json', order)
+    //         .then(response => {
+    //             this.setState({loading: false, purchasing: false}); 
+    //         })
+    //         .catch(error => {
+    //             this.setState({ loading: false, purchasing: false }); 
+    //         }); // endpoint
 
+    this.props.history.push('/checkout'); 
     }
 
     /* add ingridients */
@@ -116,7 +118,7 @@ class BurgerBuilder extends Component {
             return 0; 
          }
          const updatedCounted = oldCount - 1;
-         // create a new array of our old orray 
+         // create a new array of our old array 
          const updatedIngridients = {
              ...this.state.ingridient
          }; 

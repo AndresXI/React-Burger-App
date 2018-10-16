@@ -15,10 +15,22 @@ class Checkout extends Component {
          }
       }
 
+      checkoutCancelled = () => {
+         // goes back to the last page 
+         this.props.history.goBack(); 
+      }
+
+      checkoutContinued = () => {
+         this.props.history.replace('/checkout/contact-data'); 
+      }
+
       render() {
          return (
             <div>
-               <CheckoutSummary ingridient={this.state.ingridient}/>
+               <CheckoutSummary 
+                  checkoutContinued={this.checkoutContinued}
+                  checkoutCancelled={this.checkoutCancelled}
+                  ingridient={this.state.ingridient}/>
             </div>
          )
       }
