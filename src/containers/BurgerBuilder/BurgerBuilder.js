@@ -44,7 +44,7 @@ class BurgerBuilder extends Component {
             .reduce((sum, el) => {
                 return sum + el; 
             }, 0); 
-        this.setState({purchasable: sum > 0}) // purchase is true if the total sum is > 0   
+        return sum > 0 // purchase is true if the total sum is > 0   
     }
 
     purchaseHandler = () => {
@@ -56,17 +56,7 @@ class BurgerBuilder extends Component {
     }
 
     purchaseContinueHandler = () => {
-    const queryParams = []; 
-    for (let i in this.state.ingridient) {
-        // property name = property value 
-        queryParams.push(encodeURIComponent(i) + '=' + encodeURIComponent(this.state.ingridient[i])); 
-    }
-    queryParams.push('price=' + this.state.totalPrice); 
-    const queryString = queryParams.join("&"); 
-    this.props.history.push({
-        pathname: '/checkout',
-        search: '?' + queryString
-    }); 
+        this.props.history.push('/checkout'); 
     }
 
     render() {
@@ -88,7 +78,7 @@ class BurgerBuilder extends Component {
                     <Burger ingridients={this.props.ings}/>
                     <BuildControls 
                         ordered={this.purchaseHandler}
-                        purchasable={this.state.purchasable}
+                        purchasable={this.updatePurchaseState(this.props.ings)}
                         price={this.props.price}
                         disabled={disabledInfo}
                         ingridientRemoved={this.props.onIngridientRemoved}
