@@ -122,6 +122,7 @@ class ContactData extends Component {
       },
       deliveryMethod: "fastest"
     };
+    
     // send data to backend with axios
     axios
       .post("/orders.json", order)

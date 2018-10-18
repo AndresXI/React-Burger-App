@@ -4,11 +4,13 @@ import Burger from '../../components/Burger/Burger';
 import BuildControls from '../../components/Burger/BuildControls/BuildControls';
 import Modal from '../../components/UI/Modal/Modal'; 
 import OrderSummary from '../../components/Burger/OderSummary/OrderSummary'; 
-import axios from '../../axios-orders'; 
 import Spinner from '../../components/UI/Spinner/Spinner'; 
 import withErrorHandler from '../../hoc/withErrorHandler/withErrorHandler'; 
 import { connect } from 'react-redux'; 
-import * as actionType from '../../store/action'; 
+import * as actionType from '../../store/actions/index'; 
+import axios from "../../axios-orders"; 
+
+
 
 
 /* This component will contain our state for our burger */
@@ -18,22 +20,14 @@ class BurgerBuilder extends Component {
     state = {
         purchasable: false,
         purchasing: false,
-        loading: false, 
-        error: false
+
     }
 
     // fetching data from the backend 
     componentDidMount() {
         console.log(this.props); 
         // getting our ingridents 
-        // axios.get('https://react-burger-app-d3a03.firebaseio.com/ingridients.json')
-        //     .then(response => {
-        //         // set our state to the ingridients object in our backend 
-        //         this.setState({ingridient: response.data}); 
-        //     })
-        //     .catch(error => {
-        //         this.setState({error: true}); 
-        //     }); 
+        this.props.onFetchIngridients(); 
     }
 
     updatePurchaseState(ingridients) {
@@ -69,8 +63,8 @@ class BurgerBuilder extends Component {
             disabledInfo[key] = disabledInfo[key] <= 0; 
         }
         let orderSummary = null; 
-
-        let burger = this.state.error ? <p>Ingridients cannot be loaded</p> : <Spinner />; 
+        console.log(this.props.error);
+        let burger = this.props.error ? <p>Ingridients cannot be loaded</p> : <Spinner />; 
         if (this.props.ings) {
             // override burger if ingridients is not null 
               burger = (
@@ -93,11 +87,6 @@ class BurgerBuilder extends Component {
                 ingridient={this.props.ings} />; 
         }
 
-        // showing the loader spinner 
-        if (this.state.loading) {
-            orderSummary = <Spinner /> ;
-        }
-
         return (
             <Aux>
                 <Modal 
@@ -114,14 +103,16 @@ class BurgerBuilder extends Component {
 const mapStateToProps = state => {
     return {
         ings: state.ingridient,
-        price: state.totalPrice
+        price: state.totalPrice,
+        error: state.error
     }; 
 }
 
 const mapDispatchToProps = dispatch => {
     return {
-        onIngridientAdded: (ingName) => dispatch({type: actionType.ADD_INGRIDIENT, ingridientName: ingName}),
-        onIngridientRemoved: (ingName) => dispatch({type: actionType.REMOVE_INGRIDIENT, ingridientName: ingName}),
+        onIngridientAdded: (ingName) => dispatch(actionType.addIngridient(ingName)),
+        onIngridientRemoved: (ingName) => dispatch(actionType.removeIngridient(ingName)),
+        onFetchIngridients: () => dispatch(actionType.fetchIngridients())
     }
 }
 
