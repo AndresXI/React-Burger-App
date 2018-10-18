@@ -7,6 +7,8 @@ import OrderSummary from '../../components/Burger/OderSummary/OrderSummary';
 import axios from '../../axios-orders'; 
 import Spinner from '../../components/UI/Spinner/Spinner'; 
 import withErrorHandler from '../../hoc/withErrorHandler/withErrorHandler'; 
+import { connect } from 'react-redux'; 
+import * as actionType from '../../store/action'; 
 
 
 /** Seetting prices for each ingridient */
@@ -22,7 +24,6 @@ class BurgerBuilder extends Component {
 
     /** Buger state of ingridients */
     state = {
-        ingridient: null,
         totalPrice: 0,
         purchasable: false,
         purchasing: false,
@@ -34,14 +35,14 @@ class BurgerBuilder extends Component {
     componentDidMount() {
         console.log(this.props); 
         // getting our ingridents 
-        axios.get('https://react-burger-app-d3a03.firebaseio.com/ingridients.json')
-            .then(response => {
-                // set our state to the ingridients object in our backend 
-                this.setState({ingridient: response.data}); 
-            })
-            .catch(error => {
-                this.setState({error: true}); 
-            }); 
+        // axios.get('https://react-burger-app-d3a03.firebaseio.com/ingridients.json')
+        //     .then(response => {
+        //         // set our state to the ingridients object in our backend 
+        //         this.setState({ingridient: response.data}); 
+        //     })
+        //     .catch(error => {
+        //         this.setState({error: true}); 
+        //     }); 
     }
 
     updatePurchaseState(ingridients) {
@@ -123,7 +124,7 @@ class BurgerBuilder extends Component {
     render() {
         // copy our ingredients on an immutable way 
         const disabledInfo = {
-            ...this.state.ingridient // {salad: true, meat: false ....}
+            ...this.props.ings // {salad: true, meat: false ....}
         }; 
 
         for (let key in disabledInfo) {
@@ -132,18 +133,18 @@ class BurgerBuilder extends Component {
         let orderSummary = null; 
 
         let burger = this.state.error ? <p>Ingridients cannot be loaded</p> : <Spinner />; 
-        if (this.state.ingridient) {
+        if (this.props.ings) {
             // override burger if ingridients is not null 
               burger = (
                 <Aux>
-                    <Burger ingridients={this.state.ingridient}/>
+                    <Burger ingridients={this.props.ings}/>
                     <BuildControls 
-                    ordered={this.purchaseHandler}
-                    purchasable={this.state.purchasable}
-                    price={this.state.totalPrice}
-                    disabled={disabledInfo}
-                    ingridientRemoved={this.removeIngridientHandler}
-                    ingridientAdded={this.addIngridientHandler} />
+                        ordered={this.purchaseHandler}
+                        purchasable={this.state.purchasable}
+                        price={this.state.totalPrice}
+                        disabled={disabledInfo}
+                        ingridientRemoved={this.props.onIngridientRemoved}
+                        ingridientAdded={this.props.onIngridientAdded} />
                 </Aux>
             ); 
             // override order summary 
@@ -151,7 +152,7 @@ class BurgerBuilder extends Component {
                 price={this.state.totalPrice}
                 purchaseContinued={this.purchaseContinueHandler}
                 purchaseCancelled={this.purchaseCancelHandler}
-                ingridient={this.state.ingridient} />; 
+                ingridient={this.props.ings} />; 
         }
 
         // showing the loader spinner 
@@ -172,4 +173,20 @@ class BurgerBuilder extends Component {
     }
 }
 
-export default withErrorHandler(BurgerBuilder, axios); 
+const mapStateToProps = state => {
+    return {
+        ings: state.ingridient
+    }; 
+}
+
+const mapDispatchToProps = dispatch => {
+    return {
+        onIngridientAdded: (ingName) => dispatch({type: actionType.ADD_INGRIDIENT, ingridientName: ingName}),
+        onIngridientRemoved: (ingName) => dispatch({type: actionType.REMOVE_INGRIDIENT, ingridientName: ingName}),
+    }
+}
+
+
+
+
+export default connect(mapStateToProps, mapDispatchToProps) (withErrorHandler(BurgerBuilder, axios)); 
