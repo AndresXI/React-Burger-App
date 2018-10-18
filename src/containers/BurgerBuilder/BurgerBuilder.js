@@ -11,20 +11,11 @@ import { connect } from 'react-redux';
 import * as actionType from '../../store/action'; 
 
 
-/** Seetting prices for each ingridient */
-const INGRIDIENT_PRICES = {
-    salad: 0.5,
-    cheese: 0.4,
-    meat: 1.3,
-    bacon: 0.7,
-}
-
 /* This component will contain our state for our burger */
 class BurgerBuilder extends Component {
 
     /** Buger state of ingridients */
     state = {
-        totalPrice: 0,
         purchasable: false,
         purchasing: false,
         loading: false, 
@@ -78,49 +69,6 @@ class BurgerBuilder extends Component {
     }); 
     }
 
-    /* add ingridients */
-    addIngridientHandler = (type) => {
-        /** get old ingridient count*/
-        const oldCount = this.state.ingridient[type]; 
-        const updatedCounted = oldCount + 1; 
-        // create a new array of our old array 
-        const updatedIngridients = {
-            ...this.state.ingridient
-        }
-        updatedIngridients[type] = updatedCounted; 
-        // fetch the price 
-        const priceAddition = INGRIDIENT_PRICES[type]; 
-        const oldPrice = this.state.totalPrice; 
-        const newPrice = oldPrice + priceAddition; 
-        this.setState({totalPrice: newPrice, ingridient: updatedIngridients}); 
-        this.updatePurchaseState(updatedIngridients); 
-    }
-
-    /** remove ingridients */
-    removeIngridientHandler = (type) => {
-         /** get old ingridient count*/
-         const oldCount = this.state.ingridient[type];
-         // make sure we return 0 when there are no ingridients 
-         if (oldCount <= 0) {
-            return 0; 
-         }
-         const updatedCounted = oldCount - 1;
-         // create a new array of our old array 
-         const updatedIngridients = {
-             ...this.state.ingridient
-         }; 
-         updatedIngridients[type] = updatedCounted;
-         // fetch the price 
-         const priceDeduction = INGRIDIENT_PRICES[type];
-         const oldPrice = this.state.totalPrice;
-         const newPrice = oldPrice - priceDeduction;
-         this.setState({
-             totalPrice: newPrice,
-             ingridient: updatedIngridients
-         });
-         this.updatePurchaseState(updatedIngridients);
-    }
-
     render() {
         // copy our ingredients on an immutable way 
         const disabledInfo = {
@@ -141,7 +89,7 @@ class BurgerBuilder extends Component {
                     <BuildControls 
                         ordered={this.purchaseHandler}
                         purchasable={this.state.purchasable}
-                        price={this.state.totalPrice}
+                        price={this.props.price}
                         disabled={disabledInfo}
                         ingridientRemoved={this.props.onIngridientRemoved}
                         ingridientAdded={this.props.onIngridientAdded} />
@@ -149,7 +97,7 @@ class BurgerBuilder extends Component {
             ); 
             // override order summary 
             orderSummary = <OrderSummary
-                price={this.state.totalPrice}
+                price={this.props.price}
                 purchaseContinued={this.purchaseContinueHandler}
                 purchaseCancelled={this.purchaseCancelHandler}
                 ingridient={this.props.ings} />; 
@@ -175,7 +123,8 @@ class BurgerBuilder extends Component {
 
 const mapStateToProps = state => {
     return {
-        ings: state.ingridient
+        ings: state.ingridient,
+        price: state.totalPrice
     }; 
 }
 
@@ -188,5 +137,5 @@ const mapDispatchToProps = dispatch => {
 
 
 
-
+// order does matter when exporting 
 export default connect(mapStateToProps, mapDispatchToProps) (withErrorHandler(BurgerBuilder, axios)); 
