@@ -3,4 +3,7 @@ export {
   removeIngridient,
   fetchIngridients
 } from "./burgerBuilder"; 
-export {} from './order'; 
+
+export { 
+   purchaseBurger
+} from './order'; 
