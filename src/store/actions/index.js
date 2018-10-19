@@ -1,3 +1,5 @@
+
+// bundle all exports 
 export {
   addIngridient,
   removeIngridient,
@@ -7,5 +9,9 @@ export {
 export { 
    purchaseBurger,
    purchaseInit,
-   fetchOrders
+   fetchOrders,
 } from './order'; 
+
+export {
+  auth
+} from './auth'; 
