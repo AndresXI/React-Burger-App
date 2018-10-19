@@ -1,4 +1,7 @@
 import * as actionTypes from '../actions/actionTypes'; 
+import { updateObject } from '../utility'; 
+
+
 
 const initialState = {
    ingridient: null,
@@ -14,43 +17,56 @@ const INGRIDIENT_PRICES = {
    bacon: 0.7,
 }
 
+// helper functions 
+const addIngridient = (state, action) => {
+      const updatedIngridient = { [action.ingridientName]: state.ingridient[action.ingridientName] + 1 }
+      const updatedIngridients = updateObject(state.ingridient, updatedIngridient);
+      const updatedState = {
+            ingridient: updatedIngridients,
+            totalPrice: state.totalPrice + INGRIDIENT_PRICES[action.ingridientName]
+      }
+      return updateObject(state, updatedState); 
+}; 
+
+const removeIngridient = (state, action) => {
+      const updatedIng = { [action.ingridientName]: state.ingridient[action.ingridientName] - 1 }
+      const updatedIngs = updateObject(state.ingridient, updatedIng);
+      const updatedSt = {
+            ingridient: updatedIngs,
+            totalPrice: state.totalPrice + INGRIDIENT_PRICES[action.ingridientName]
+      }
+      return updateObject(state, updatedSt)
+}
+
+const setIngridients = (state, action) => {
+      return updateObject(state, {
+        ...state,
+        ingridient: action.ingridients,
+        error: false,
+        totalPrice: 0
+      });
+}
+
+const fetchIngridientsFail = (state, action) => {
+      return updateObject(state, { error: true }); 
+}
+
+/** Switch case for actions  */
 const reducer = (state = initialState, action) => {
 
    switch (action.type) {
 
       case actionTypes.ADD_INGRIDIENT: 
-         return {
-            ...state, 
-            ingridient: {
-               ...state.ingridient,
-               [action.ingridientName]: state.ingridient[action.ingridientName] + 1 
-            }, 
-            totalPrice: state.totalPrice + INGRIDIENT_PRICES[action.ingridientName]
-         }; 
+         return addIngridient(state, action);
 
       case actionTypes.REMOVE_INGRIDIENT: 
-         return {
-            ...state,
-            ingridient: {
-               ...state.ingridient,
-               [action.ingridientName]: state.ingridient[action.ingridientName] - 1
-            },
-            totalPrice: state.totalPrice - INGRIDIENT_PRICES[action.ingridientName]
-         };
+         return removeIngridient(state, action);
          
       case actionTypes.SET_INGRIDIENTS:
-         return {
-               ...state, 
-               ingridient: action.ingridients,
-               error: false, 
-               totalPrice: 0
-         }; 
+         return setIngridients(state, action); 
 
       case actionTypes.FETCH_INGRIDIENTS_FALIED:
-         return {
-               ...state, 
-               error: true
-         }; 
+         return fetchIngridientsFail(state, action); 
 
       default:     
          return state; 
