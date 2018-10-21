@@ -9,20 +9,22 @@ export const authStart = ()  => {
    }; 
 }
 
-export const authSuccess = (authData) => {
+export const authSuccess = (token, userId) => {
    return {
       type: actionTypes.AUTH_SUCCESS,
-      authData: authData
+      idToken: token, 
+      userId: userId
    }
 }
 
-export const authFail = () => {
+export const authFail = (error) => {
    return {
-      type: actionTypes.AUTH_FAIL
+      type: actionTypes.AUTH_FAIL,
+      error: error
    }
 }
 
-export const auth = (email, password) => {
+export const auth = (email, password, isSignup) => {
    return dispatch => {
       // authenticate user 
       dispatch(authStart()); 
@@ -30,16 +32,21 @@ export const auth = (email, password) => {
          email: email, 
          password: password, 
          returnSecureToken: true
+      }; 
+
+      let url = "https://www.googleapis.com/identitytoolkit/v3/relyingparty/signupNewUser?key=AIzaSyCdAJwZ8pZOdnKHlkp_QeRVWzYPUB5g68I"; 
+      if (!isSignup) {
+         url = "https://www.googleapis.com/identitytoolkit/v3/relyingparty/verifyPassword?key=AIzaSyCdAJwZ8pZOdnKHlkp_QeRVWzYPUB5g68I";
       }
-      axios.post("https://www.googleapis.com/identitytoolkit/v3/relyingparty/signupNewUser?key=" + 
-         "AIzaSyCdAJwZ8pZOdnKHlkp_QeRVWzYPUB5g68I", authData)
+
+      axios.post(url, authData)
          .then(res => {
             console.log(res); 
-            dispatch(authSuccess(res.data));
+            dispatch(authSuccess(res.data.idToken, res.data.localId));
          })
          .catch(err => {
             console.log(err); 
-            dispatch(authFail()); 
+            dispatch(authFail(err)); 
          });
    }; 
 }
