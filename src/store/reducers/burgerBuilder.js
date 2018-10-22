@@ -6,7 +6,8 @@ import { updateObject } from '../utility';
 const initialState = {
    ingridient: null,
    totalPrice: 0,
-   error: false
+   error: false,
+   building: false
 }; 
 
 /** Seetting prices for each ingridient */
@@ -23,6 +24,7 @@ const addIngridient = (state, action) => {
       const updatedIngridients = updateObject(state.ingridient, updatedIngridient);
       const updatedState = {
             ingridient: updatedIngridients,
+            building: true,
             totalPrice: state.totalPrice + INGRIDIENT_PRICES[action.ingridientName]
       }
       return updateObject(state, updatedState); 
@@ -33,6 +35,7 @@ const removeIngridient = (state, action) => {
       const updatedIngs = updateObject(state.ingridient, updatedIng);
       const updatedSt = {
             ingridient: updatedIngs,
+            building: true,
             totalPrice: state.totalPrice + INGRIDIENT_PRICES[action.ingridientName]
       }
       return updateObject(state, updatedSt)
@@ -43,6 +46,7 @@ const setIngridients = (state, action) => {
         ...state,
         ingridient: action.ingridients,
         error: false,
+        building: false,
         totalPrice: 0
       });
 }

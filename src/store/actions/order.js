@@ -47,7 +47,7 @@ export const purchaseInit = () => {
 }; 
 
 
-// Action creators for fetching orders
+// Action creators for fetching orders to firebase
 export const fetchOrdersSuccess = (orders) => {
    return {
       type: actionTypes.FETCH_ORDERS_SUCCESS,
@@ -68,10 +68,10 @@ export const fetchOrdersStart = () => {
 }
 
 
-export const fetchOrders = () => {
+export const fetchOrders = (token) => {
    return dispatch => {
       dispatch(fetchOrdersStart())
-      axios.get('/orders.json')
+         axios.get('/orders.json?auth=' + token)
          .then(res => {
             // turn object into an array 
             const fetchedOrders = [];
