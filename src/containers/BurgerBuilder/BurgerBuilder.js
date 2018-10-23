@@ -14,7 +14,7 @@ import axios from "../../axios-orders";
 
 
 /* This component will contain our state for our burger */
-class BurgerBuilder extends Component {
+export class BurgerBuilder extends Component {
 
     /** Buger state of ingridients */
     state = {

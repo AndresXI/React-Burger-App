@@ -1,0 +1,32 @@
+import React from 'react'; 
+import { configure, shallow } from 'enzyme'; 
+import Adapter from 'enzyme-adapter-react-16'; 
+
+import NavigationItems from './NavigationItems'; 
+import NavigationItem from '../NavigationItem/NavigationItem'; 
+
+// connecting enzyme 
+configure({adapter: new Adapter()}); 
+
+describe('<NavigationItems />', () => {
+   let wrapper; 
+   beforeEach(() => {
+      wrapper = shallow(<NavigationItems />); 
+   })
+
+   // write the actual test 
+   it('should render two <NavigationItem /> elements if not authenticated', () => {
+      // shallow render the desired component 
+      expect(wrapper.find(NavigationItem)).toHaveLength(2); 
+   }); 
+
+   it('should render three <NavigationItem /> elements if authenticated', () => {
+      // set the auth property to true 
+      wrapper.setProps({isAuthenticated: true}); 
+      expect(wrapper.find(NavigationItem)).toHaveLength(3); 
+   }); 
+   it('should render an exact logout button', () => {
+      wrapper.setProps({ isAuthenticated: true }); 
+      expect(wrapper.contains(<NavigationItem link="/logout">Logout</NavigationItem>)).toEqual(true); 
+   }); 
+}); 
