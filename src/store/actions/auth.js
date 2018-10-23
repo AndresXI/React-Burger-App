@@ -59,7 +59,6 @@ export const auth = (email, password, isSignup) => {
 
       axios.post(url, authData)
          .then(res => {
-            console.log(res); 
             // extract the token and the user id from the response 
             // and dispatch it to the authSuccess method 
             const expirationDate = new Date(new Date().getTime() + res.data.expiresIn * 1000); 

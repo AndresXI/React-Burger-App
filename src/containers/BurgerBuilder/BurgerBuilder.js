@@ -25,7 +25,6 @@ class BurgerBuilder extends Component {
 
     // fetching data from the backend 
     componentDidMount() {
-        console.log(this.props); 
         // getting our ingridents 
         this.props.onFetchIngridients(); 
     }
@@ -72,7 +71,6 @@ class BurgerBuilder extends Component {
             disabledInfo[key] = disabledInfo[key] <= 0; 
         }
         let orderSummary = null; 
-        console.log(this.props.error);
         let burger = this.props.error ? <p>Ingridients cannot be loaded</p> : <Spinner />; 
         if (this.props.ings) {
             // override burger if ingridients is not null 
